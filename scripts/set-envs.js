@@ -4,14 +4,14 @@ require('dotenv').config();
 
 const targetPath = './src/environments';
 
-const environment = '/environment.ts'
+const environments = '/environments.ts'
 
 const envFileContent = `
-export const environment = {
+export const environments = {
     url_base: " ${ process.env['URL_BASE'] }"
 };
 `;
 
 mkdirSync(targetPath, { recursive: true });
 
-writeFileSync( targetPath + environment, envFileContent );
+writeFileSync( targetPath + environments, envFileContent );
