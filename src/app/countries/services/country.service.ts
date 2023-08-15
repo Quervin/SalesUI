@@ -16,4 +16,20 @@ export class CountryService {
   getCountries():Observable<Country[]> {
     return this.http.get<Country[]>(`${this.baseUrl}/v1/api/countries`);
   }
+
+  getCountry(id: number):Observable<Country> {
+    return this.http.get<Country>(`${this.baseUrl}/v1/api/countries/${ id }`);
+  }
+
+  createCountry(country: Country): Observable<Country> {
+    return this.http.post<Country>(`${ this.baseUrl }/v1/api/countries`, country);
+  }
+
+  updateCountry(country: Country): Observable<Country> {
+    return this.http.put<Country>(`${ this.baseUrl }/v1/api/countries`, country);
+  }
+
+  deleteCountry(id: number): Observable<any> {
+    return this.http.delete<any>(`${ this.baseUrl }/v1/api/countries/${ id }`);
+  }
 }

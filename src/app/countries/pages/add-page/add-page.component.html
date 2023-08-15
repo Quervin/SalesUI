@@ -1,1 +1,34 @@
-<p>add-page works!</p>
+<h1>{{ namePage }}</h1>
+
+<mat-divider class="mb-2"></mat-divider>
+
+<div class="grid">
+    <div class="col-12 sm:col-6">
+        <mat-card>
+            <mat-card-content>
+                <form class="grid" [formGroup]="countryForm" (ngSubmit)="onSave()">
+                    <mat-form-field class="col-12">
+                        <mat-label>País:</mat-label>
+                        <input matInput type="text" required formControlName="pais" placeholder="Ingrese el nomnbre del país">
+                        <mat-error *ngIf="isValidField('pais')" class="mb-2">
+                            {{ getFieldError('pais') }}
+                        </mat-error>
+                    </mat-form-field>
+                </form>
+
+                <div class="flex justify-content-between">
+                    <button (click)="onSave()" mat-flat-button color="primary">
+                        <mat-icon>save</mat-icon>
+                        Guardar
+                    </button>
+
+                    <button (click)="goBack()" mat-raised-button>
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

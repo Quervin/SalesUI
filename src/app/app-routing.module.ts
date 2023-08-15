@@ -7,8 +7,12 @@ const routes: Routes = [
     loadChildren: () => import('./countries/countries.module').then( m => m.CountriesModule)
   },
   {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+  },
+  {
     path: '**',
-    redirectTo: 'country'
+    redirectTo: 'auth'
   }
 ];
 

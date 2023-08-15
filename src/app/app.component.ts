@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'SalesUI';
+
+  constructor(
+    public _loading: ValidatorsService
+  ) {}
+
 }
