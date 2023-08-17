@@ -9,8 +9,7 @@ import { Menu } from 'src/app/interfaces/menu';
 })
 export class SideNavComponent {
   public sidebarItems: Menu[] = [
-    { label: 'Listado de Paises', icon: 'label', url: 'country/list'},
-    { label: 'Agregar', icon: 'add', url: './add'},
-     { label: 'Login', icon: 'edit', url: 'auth/login'}
+    { label: 'Listado de Paises', icon: 'label', url: ['/country/list']},
+     { label: 'Login', icon: 'edit', url: ['/auth/login']}
   ]
 }

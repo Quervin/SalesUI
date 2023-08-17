@@ -21,19 +21,21 @@ export class ListPageComponent implements OnInit {
     private countryService: CountryService,
     private validatorService: ValidatorsService,
     private router:Router
-    ) {}
+    ) {
+      this.loadCountries();
+    }
 
   ngOnInit(): void {
-    this.loadCountries();
   }
 
   loadCountries() {
     this.countryService.getCountries()
     .pipe(
-      catchError(() => {
+      catchError(({ error, status })  => {
         Swal.fire({
+          icon: "error",
           title: 'Error',
-          text: "Ha ocurrido un error inesperado"
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
         });
         return of();
       })
@@ -65,10 +67,11 @@ export class ListPageComponent implements OnInit {
         this.validatorService.showLoading(true);
         this.countryService.deleteCountry(id)
         .pipe(
-          catchError(() => {
+          catchError(({ error, status })  => {
             Swal.fire({
+              icon: "error",
               title: 'Error',
-              text: "Ha ocurrido un error inesperado"
+              text: status != 0 ? error : "Ha ocurrido un error inesperado"
             });
             this.validatorService.showLoading(false);
             return of();

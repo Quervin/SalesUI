@@ -34,14 +34,16 @@ export class AddPageComponent {
     private router: Router
   ) {
     if ( !this.router.url.includes('edit') ) return;
+    this.namePage = 'Editar País';
     this.validatorService.showLoading(true);
     this.activatedRoute.params
     .pipe(
       switchMap( ({ id }) => this.countryService.getCountry( id ) ),
-      catchError(() => {
+      catchError(({ error, status })  => {
         Swal.fire({
+          icon: "error",
           title: 'Error',
-          text: "Ha ocurrido un error inesperado"
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
         });
         this.validatorService.showLoading(false);
         return of();
@@ -75,10 +77,11 @@ export class AddPageComponent {
       this.validatorService.showLoading(true);
       this.countryService.updateCountry( this.country )
       .pipe(
-        catchError(() => {
+        catchError(({ error, status })  => {
           Swal.fire({
+            icon: "error",
             title: 'Error',
-            text: "Ha ocurrido un error inesperado"
+            text: status != 0 ? error : "Ha ocurrido un error inesperado"
           });
           this.validatorService.showLoading(false);
           return of();
@@ -93,10 +96,11 @@ export class AddPageComponent {
     this.validatorService.showLoading(true);
     this.countryService.createCountry(this.country)
     .pipe(
-      catchError(() => {
+      catchError( ({ error, status }) => {
         Swal.fire({
+          icon: "error",
           title: 'Error',
-          text: "Ha ocurrido un error inesperado"
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
         });
         this.validatorService.showLoading(false);
         return of();
