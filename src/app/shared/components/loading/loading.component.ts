@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'loading',
+  selector: 'shared-loading',
   templateUrl: './loading.component.html',
   styles: [
   ]

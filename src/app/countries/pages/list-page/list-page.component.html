@@ -4,32 +4,4 @@
 
 <mat-divider class="mb-2"></mat-divider>
 
-<ng-template #divTable>
-  <mat-card>
-    <mat-card-content>
-      <p>No hay registros para mostrar</p>
-    </mat-card-content>
-  </mat-card>
-</ng-template>
-
-<div>
-
-  <table *ngIf="countries.length != 0; else divTable" mat-table [dataSource]="countries" class="mat-elevation-z8">
-
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef> Acciones </th>
-      <td mat-cell *matCellDef="let country">
-        <button (click)="gotoUpdateCountry(country.id)" mat-raised-button color="accent" class="m-2">Editar</button>
-        <button (click)="delete(country.id)" mat-raised-button color="warn">Borrar</button>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let country"> {{ country.name }} </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-  </table>
-</div>
+<shared-list-table [list]="countries" [columnsData]="columns" (onGotoDetails)="gotoCountryDetails($event)" (onGotoUpdate)="gotoUpdateCountry($event)" (onDelete)="deleteCountry($event)"></shared-list-table>

@@ -1,0 +1,27 @@
+
+        <mat-card>
+            <mat-card-content>
+                <form class="grid" [formGroup]="myForm!" (ngSubmit)="emitSave()">
+                    <mat-form-field class="col-12">
+                        <mat-label>{{ label }}</mat-label>
+                        <input matInput type="text" required [formControlName]="name" [placeholder]="placeholder">
+                        <mat-error *ngIf="isValidField(name)" class="mb-2">
+                            {{ getFieldError(name) }}
+                        </mat-error>
+                    </mat-form-field>
+                </form>
+
+                <div class="flex justify-content-between">
+                    <button (click)="emitSave()" mat-flat-button color="primary">
+                        <mat-icon>save</mat-icon>
+                        Guardar
+                    </button>
+
+                    <button (click)="emitBack()" mat-raised-button>
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+
+            </mat-card-content>
+        </mat-card>

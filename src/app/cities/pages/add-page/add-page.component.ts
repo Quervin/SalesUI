@@ -4,9 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { Country } from 'src/app/interfaces';
+import { City } from 'src/app/interfaces';
 
-import { CountryService } from '../../services/country.service';
+import { CityService } from '../../services/city.service';
 import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
@@ -15,32 +15,36 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
   ]
 })
 export class AddPageComponent {
-
-  public namePage: string = 'Crear País';
+  public namePage: string = 'Crear Estado';
   
-  public countryForm: FormGroup = this.fb.group({
-    pais: [ '', [Validators.required, Validators.maxLength(100)] ]
+  public cityForm: FormGroup = this.fb.group({
+    cuidad: [ '', [Validators.required, Validators.maxLength(100)] ]
   });
 
-  public country: Country = {
+  public stateId: number = 0;
+
+  public city: City = {
     id: 0,
     name: "",
-    statesNumber: 0,
-    states: []
+    stateId: 0
   };
 
   constructor(
     private fb: FormBuilder,
-    private countryService: CountryService,
+    private cityService: CityService,
     private activatedRoute: ActivatedRoute,
     private validatorService: ValidatorsService,
     private router: Router
   ) {
-    if ( !this.router.url.includes('edit') ) return;
-    this.namePage = 'Editar País';
+    if ( !this.router.url.includes('edit') ) {
+      this.activatedRoute.params
+      .subscribe(({ id }) => this.stateId = id);
+      return;
+    } 
+    this.namePage = 'Editar Estado';
     this.activatedRoute.params
     .pipe(
-      switchMap( ({ id }) => this.countryService.getCountry( id ) ),
+      switchMap( ({ id }) => this.cityService.getCity( id ) ),
       catchError(({ error, status })  => {
         Swal.fire({
           icon: "error",
@@ -50,27 +54,28 @@ export class AddPageComponent {
         return of();
       })
     )
-    .subscribe( country => {
+    .subscribe( state => {
 
-      if ( !country ) {
+      if ( !state ) {
        this.goBack();
       }
 
-      this.country = country;
+      this.city = state;
+      this.stateId = this.city.stateId;
 
-      this.countryForm.reset({
-        pais: country.name
+      this.cityForm.reset({
+        cuidad: state.name
       });
     });
   }
 
   onSave(myForm: FormGroup) {
 
-    this.country.name = myForm.value.pais;
+    this.city.name = myForm.value.cuidad;
 
-    if ( this.country.id != 0 ) {
+    if ( this.city.id != 0 ) {
       this.validatorService.showLoading(true);
-      this.countryService.updateCountry( this.country )
+      this.cityService.updateCity( this.city )
       .pipe(
         catchError(({ error, status })  => {
           Swal.fire({
@@ -87,9 +92,11 @@ export class AddPageComponent {
       });
       return;
     }
+    
+    this.city.stateId = this.stateId;
 
     this.validatorService.showLoading(true);
-    this.countryService.createCountry(this.country)
+    this.cityService.createCity(this.city)
     .pipe(
       catchError( ({ error, status }) => {
         Swal.fire({
@@ -109,7 +116,6 @@ export class AddPageComponent {
 
 
   goBack() {
-    this.router.navigate(['country/list']);
+    this.router.navigate(['state/details', this.stateId]);
   }
-
 }

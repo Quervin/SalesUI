@@ -4,9 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { Country } from 'src/app/interfaces';
+import { State } from 'src/app/interfaces';
 
-import { CountryService } from '../../services/country.service';
+import { StateService } from '../../services/state.service';
 import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
@@ -16,31 +16,37 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
 })
 export class AddPageComponent {
 
-  public namePage: string = 'Crear País';
+  public namePage: string = 'Crear Estado';
   
-  public countryForm: FormGroup = this.fb.group({
-    pais: [ '', [Validators.required, Validators.maxLength(100)] ]
+  public stateForm: FormGroup = this.fb.group({
+    estado: [ '', [Validators.required, Validators.maxLength(100)] ]
   });
 
-  public country: Country = {
+  public countryId: number = 0;
+
+  public state: State = {
     id: 0,
     name: "",
-    statesNumber: 0,
-    states: []
+    countryId: 0,
+    cities: []
   };
 
   constructor(
     private fb: FormBuilder,
-    private countryService: CountryService,
+    private stateService: StateService,
     private activatedRoute: ActivatedRoute,
     private validatorService: ValidatorsService,
     private router: Router
   ) {
-    if ( !this.router.url.includes('edit') ) return;
-    this.namePage = 'Editar País';
+    if ( !this.router.url.includes('edit') ) {
+      this.activatedRoute.params
+      .subscribe(({ id }) => this.countryId = id);
+      return;
+    } 
+    this.namePage = 'Editar Estado';
     this.activatedRoute.params
     .pipe(
-      switchMap( ({ id }) => this.countryService.getCountry( id ) ),
+      switchMap( ({ id }) => this.stateService.getState( id ) ),
       catchError(({ error, status })  => {
         Swal.fire({
           icon: "error",
@@ -50,27 +56,28 @@ export class AddPageComponent {
         return of();
       })
     )
-    .subscribe( country => {
+    .subscribe( state => {
 
-      if ( !country ) {
+      if ( !state ) {
        this.goBack();
       }
 
-      this.country = country;
+      this.state = state;
+      this.countryId = this.state.countryId;
 
-      this.countryForm.reset({
-        pais: country.name
+      this.stateForm.reset({
+        estado: state.name
       });
     });
   }
 
   onSave(myForm: FormGroup) {
 
-    this.country.name = myForm.value.pais;
+    this.state.name = myForm.value.estado;
 
-    if ( this.country.id != 0 ) {
+    if ( this.state.id != 0 ) {
       this.validatorService.showLoading(true);
-      this.countryService.updateCountry( this.country )
+      this.stateService.updateState( this.state )
       .pipe(
         catchError(({ error, status })  => {
           Swal.fire({
@@ -87,9 +94,11 @@ export class AddPageComponent {
       });
       return;
     }
+    
+    this.state.countryId = this.countryId;
 
     this.validatorService.showLoading(true);
-    this.countryService.createCountry(this.country)
+    this.stateService.createState(this.state)
     .pipe(
       catchError( ({ error, status }) => {
         Swal.fire({
@@ -109,7 +118,6 @@ export class AddPageComponent {
 
 
   goBack() {
-    this.router.navigate(['country/list']);
+    this.router.navigate(['country/details', this.countryId]);
   }
-
 }

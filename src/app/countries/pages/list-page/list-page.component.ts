@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Country } from 'src/app/interfaces/country';
-import { CountryService } from '../../services/country.service';
 import { Router } from '@angular/router';
-import { ValidatorsService } from 'src/app/shared/services/validators.service';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 
+import { Country, Table } from 'src/app/interfaces';
+
+import { CountryService } from '../../services/country.service';
+import { ValidatorsService } from 'src/app/shared/services/validators.service';
+
 @Component({
-  selector: 'app-list-page',
   templateUrl: './list-page.component.html',
   styles: [
   ]
@@ -15,7 +16,10 @@ import Swal from 'sweetalert2';
 export class ListPageComponent implements OnInit {
 
   public countries: Country[] = [];
-  public columns: string[] = ['actions', 'name'];
+  public columns: Table[] = [
+    { columnHeater: 'name',  columnHeaterValue: 'País'},
+    { columnHeater: 'statesNumber', columnHeaterValue: 'Estados / Departamentos'}
+  ];
 
   constructor( 
     private countryService: CountryService,
@@ -50,15 +54,19 @@ export class ListPageComponent implements OnInit {
     this.router.navigate(['country/add']);
   }
 
+  gotoCountryDetails(id: number) {
+    this.router.navigate(['country/details', id]);
+  }
+
   gotoUpdateCountry(id: number) {
     this.router.navigate(['country/edit', id]);
   }
 
-  delete(id: number) {
+  deleteCountry(id: number) {
     Swal.fire<Boolean>({
       icon: 'question',
       title: 'Confirmación',
-      text: "¿Realmente deseas eliominar el registro?",
+      text: "¿Realmente deseas eliminar el registro?",
       showCancelButton: true,
       cancelButtonText: "No",
       confirmButtonText: "Si"
@@ -83,7 +91,7 @@ export class ListPageComponent implements OnInit {
       } else {
         return;
       }
-    })
+    });
   }
 
 }

@@ -1,0 +1,14 @@
+<h1>Países</h1>
+
+<div class="flex justify-content-between">
+    <a (click)="gotoCreateState()" mat-stroked-button color="primary" class="m-2">Nueva Cuidad</a>
+
+    <button (click)="goBack()" mat-raised-button>
+        <mat-icon>arrow_back</mat-icon>
+        Regresar
+    </button>
+</div>
+
+<mat-divider class="mb-2"></mat-divider>
+
+<shared-list-table [showDetails]="false" [list]="state.cities" [columnsData]="columns" (onGotoUpdate)="gotoUpdateState($event)" (onDelete)="deleteState($event)"></shared-list-table>

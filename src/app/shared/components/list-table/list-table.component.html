@@ -1,0 +1,29 @@
+<ng-template #divTable>
+    <mat-card>
+      <mat-card-content>
+        <p>No hay registros para mostrar</p>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+  
+  <table *ngIf="list.length != 0; else divTable" mat-table [dataSource]="list" class="mat-elevation-z8">
+      
+    <ng-container *ngFor="let column of columnsData" [matColumnDef]="column.columnHeater">
+      <th mat-header-cell *matHeaderCellDef> {{ column.columnHeaterValue }} </th>
+       <td mat-cell *matCellDef="let data"> {{ data[column.columnHeater] }} </td> 
+    </ng-container>
+  
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let data">
+        <button (click)="emitDetails(data.id)" *ngIf="showDetails" mat-raised-button class="m-2"><mat-icon>list</mat-icon> Detalles</button>
+        <button (click)="emitUpdate(data.id)" mat-raised-button color="accent" class="m-2"><mat-icon>edit</mat-icon> Editar</button>
+        <button (click)="emitDelete(data.id)" mat-raised-button color="warn"><mat-icon>delete</mat-icon> Borrar</button>
+      </td>
+    </ng-container>
+  
+
+  
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+  </table>

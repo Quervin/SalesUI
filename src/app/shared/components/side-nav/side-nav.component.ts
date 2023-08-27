@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { Menu } from 'src/app/interfaces/menu';
+
+import { Menu } from 'src/app/interfaces';
 
 @Component({
-  selector: 'side-nav',
+  selector: 'shared-side-nav',
   templateUrl: './side-nav.component.html',
   styles: [
   ]
