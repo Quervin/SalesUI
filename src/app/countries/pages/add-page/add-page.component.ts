@@ -25,8 +25,7 @@ export class AddPageComponent {
   public country: Country = {
     id: 0,
     name: "",
-    statesNumber: 0,
-    states: []
+    statesNumber: 0
   };
 
   constructor(

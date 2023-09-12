@@ -11,4 +11,4 @@
 
 <mat-divider class="mb-2"></mat-divider>
 
-<shared-list-table [showDetails]="false" [list]="state.cities" [columnsData]="columns" (onGotoUpdate)="gotoUpdateState($event)" (onDelete)="deleteState($event)"></shared-list-table>
+<shared-list-table [showDetails]="false" [list]="cities" [columnsData]="columns" [total]="totalCities" (onChangePage)="onPageChange($event)" (onFilter)="onPageChange($event)" (onCleanFilter)="loadCities($event)" (onGotoUpdate)="gotoUpdateState($event)" (onDelete)="deleteState($event)"></shared-list-table>

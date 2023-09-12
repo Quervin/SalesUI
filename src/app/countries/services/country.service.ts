@@ -13,8 +13,12 @@ export class CountryService {
 
   constructor(private http: HttpClient) { }
 
-  getCountries():Observable<Country[]> {
-    return this.http.get<Country[]>(`${this.baseUrl}/v1/api/countries`);
+  getCountries(page: number, filter: string):Observable<Country[]> {
+    return this.http.get<Country[]>(`${this.baseUrl}/v1/api/countries?page=${ page }&filter=${ filter }`);
+  }
+
+  getTotalCountries(filter: string):Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/v1/api/countries/totalCountries?filter=${ filter }`);
   }
 
   getCountry(id: number):Observable<Country> {

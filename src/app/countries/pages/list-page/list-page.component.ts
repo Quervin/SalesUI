@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { Country, Table } from 'src/app/interfaces';
+import { Country, Paginate, Table } from 'src/app/interfaces';
 
 import { CountryService } from '../../services/country.service';
 import { ValidatorsService } from 'src/app/shared/services/validators.service';
@@ -16,6 +16,7 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
 export class ListPageComponent implements OnInit {
 
   public countries: Country[] = [];
+  public totalCountries: number = 0;
   public columns: Table[] = [
     { columnHeater: 'name',  columnHeaterValue: 'País'},
     { columnHeater: 'statesNumber', columnHeaterValue: 'Estados / Departamentos'}
@@ -25,15 +26,15 @@ export class ListPageComponent implements OnInit {
     private countryService: CountryService,
     private validatorService: ValidatorsService,
     private router:Router
-    ) {
-      this.loadCountries();
-    }
+    ) {}
 
   ngOnInit(): void {
+    this.loadCountries();
   }
 
-  loadCountries() {
-    this.countryService.getCountries()
+  loadCountries(page: number = 1, filter = '') {
+    this.validatorService.showLoading(true);
+    this.countryService.getCountries(page, filter)
     .pipe(
       catchError(({ error, status })  => {
         Swal.fire({
@@ -41,13 +42,33 @@ export class ListPageComponent implements OnInit {
           title: 'Error',
           text: status != 0 ? error : "Ha ocurrido un error inesperado"
         });
+        this.validatorService.showLoading(false);
         return of();
       })
     )
-    .subscribe( country => {
-      this.countries = country;
-      this.validatorService.showLoading(false);
+    .subscribe( countries => {
+      this.countryService.getTotalCountries(filter)
+      .pipe(
+        catchError(({ error, status })  => {
+          Swal.fire({
+            icon: "error",
+            title: 'Error',
+            text: status != 0 ? error : "Ha ocurrido un error inesperado"
+          });
+          this.validatorService.showLoading(false);
+          return of();
+        })
+      )
+      .subscribe( total => {
+        this.countries = countries;
+        this.totalCountries = total;
+        this.validatorService.showLoading(false);
+      });
     });
+  }
+
+  onPageChange(paginate: Paginate) {
+    this.loadCountries(paginate.page, paginate.filter);
   }
 
   gotoCreateCountry() {

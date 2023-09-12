@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { Country, Table } from 'src/app/interfaces';
+import { Country, Paginate, State, Table } from 'src/app/interfaces';
 
 import { CountryService } from '../../services/country.service';
 import { StateService } from 'src/app/states/services/state.service';
@@ -19,11 +19,13 @@ export class DetailsPageComponent implements OnInit {
   public country: Country = {
     id: 0,
     name: "",
-    statesNumber: 0,
-    states: []
+    statesNumber: 0
   };
 
   public countryId: number = 0;
+
+  public states: State[] = [];
+  public totalStates: number = 0;
   
   public columns: Table[] = [
     { columnHeater: 'name',  columnHeaterValue: 'Estado / Departamentos'},
@@ -43,6 +45,7 @@ export class DetailsPageComponent implements OnInit {
   }
 
   loadCountry() {
+    this.validatorService.showLoading(true);
     this.activatedRoute.params
     .pipe(
       tap( ({ id }) => this.countryId = id ),
@@ -69,9 +72,48 @@ export class DetailsPageComponent implements OnInit {
       }
 
       this.country = country;
+      this.loadStates();
 
-      this.validatorService.showLoading(false);
     });
+  }
+
+  loadStates(page: number = 1, filter = '') {
+    this.validatorService.showLoading(true);
+    this.stateService.getStates(this.countryId, page, filter)
+    .pipe(
+      catchError(({ error, status })  => {
+        Swal.fire({
+          icon: "error",
+          title: 'Error',
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
+        });
+        this.validatorService.showLoading(false);
+        return of();
+      })
+    )
+    .subscribe( states => {
+      this.stateService.getTotalStates(this.countryId, filter)
+      .pipe(
+        catchError(({ error, status })  => {
+          Swal.fire({
+            icon: "error",
+            title: 'Error',
+            text: status != 0 ? error : "Ha ocurrido un error inesperado"
+          });
+          this.validatorService.showLoading(false);
+          return of();
+        })
+      )
+      .subscribe( total => {
+        this.states = states;
+        this.totalStates = total
+        this.validatorService.showLoading(false);
+      })
+    })
+  }
+
+  onPageChange(paginate: Paginate) {
+    this.loadStates(paginate.page, paginate.filter);
   }
 
   gotoCreateState() {

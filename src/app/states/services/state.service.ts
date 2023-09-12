@@ -17,6 +17,14 @@ export class StateService {
     return this.http.get<State>(`${this.baseUrl}/v1/api/states/${ id }`);
   }
 
+  getStates(id: number, page: number, filter: string):Observable<State[]> {
+    return this.http.get<State[]>(`${this.baseUrl}/v1/api/states?id=${ id }&page=${ page }&filter=${ filter }`);
+  }
+
+  getTotalStates(id: number, filter: string):Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/v1/api/states/totalStates?id=${ id }&filter=${ filter }`);
+  }
+
   createState(state: State): Observable<State> {
     return this.http.post<State>(`${ this.baseUrl }/v1/api/states`, state);
   }

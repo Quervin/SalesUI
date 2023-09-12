@@ -10,8 +10,12 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
 export class AppComponent {
   title = 'SalesUI';
 
+  get isLoading() {
+    return this.validatorsService.isLoading;
+  }
+
   constructor(
-    public _loading: ValidatorsService
+    private validatorsService: ValidatorsService
   ) {}
 
 }

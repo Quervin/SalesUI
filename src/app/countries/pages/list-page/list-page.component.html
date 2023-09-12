@@ -4,4 +4,4 @@
 
 <mat-divider class="mb-2"></mat-divider>
 
-<shared-list-table [list]="countries" [columnsData]="columns" (onGotoDetails)="gotoCountryDetails($event)" (onGotoUpdate)="gotoUpdateCountry($event)" (onDelete)="deleteCountry($event)"></shared-list-table>
+<shared-list-table [list]="countries" [columnsData]="columns" [total]="totalCountries" (onChangePage)="onPageChange($event)" (onFilter)="onPageChange($event)" (onCleanFilter)="loadCountries($event)" (onGotoDetails)="gotoCountryDetails($event)" (onGotoUpdate)="gotoUpdateCountry($event)" (onDelete)="deleteCountry($event)"></shared-list-table>

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { State, Table } from 'src/app/interfaces';
+import { City, Paginate, State, Table } from 'src/app/interfaces';
 
 import { CityService } from 'src/app/cities/services/city.service';
 import { StateService } from '../../services/state.service';
@@ -18,12 +18,14 @@ export class DetailsPageComponent {
   public state: State = {
     id: 0,
     name: "",
-    countryId: 0,
-    cities: []
+    countryId: 0
   };
 
   public countryId: number = 0;
   public stateId: number = 0;
+
+  public cities: City[] = [];
+  public totalCities: number = 0;
   
   public columns: Table[] = [
     { columnHeater: 'name',  columnHeaterValue: 'Cuidad'},
@@ -38,6 +40,7 @@ export class DetailsPageComponent {
   ) {}
 
   ngOnInit(): void {
+    this.validatorService.showLoading(true);
     this.loadState();
   }
 
@@ -69,9 +72,47 @@ export class DetailsPageComponent {
 
       this.state = state;
       this.countryId = this.state.countryId
-
-      this.validatorService.showLoading(false);
+      this.loadCities();
     });
+  }
+
+  loadCities(page: number = 1, filter: string = '') {
+    this.validatorService.showLoading(true);
+    this.cityService.getCities(this.stateId, page, filter)
+    .pipe(
+      catchError(({ error, status })  => {
+        Swal.fire({
+          icon: "error",
+          title: 'Error',
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
+        });
+        this.validatorService.showLoading(false);
+        return of();
+      })
+    )
+    .subscribe( cities => {
+      this.cityService.getTotalCities(this.stateId, filter)
+      .pipe(
+        catchError(({ error, status })  => {
+          Swal.fire({
+            icon: "error",
+            title: 'Error',
+            text: status != 0 ? error : "Ha ocurrido un error inesperado"
+          });
+          this.validatorService.showLoading(false);
+          return of();
+        })
+      )
+      .subscribe( total => {
+        this.cities = cities;
+        this.totalCities = total;
+        this.validatorService.showLoading(false);
+      });
+    });
+  }
+
+  onPageChange(paginate: Paginate) {
+    this.loadCities(paginate.page, paginate.filter);
   }
 
   gotoCreateState() {

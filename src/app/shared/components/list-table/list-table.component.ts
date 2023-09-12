@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
 
-import { Table } from 'src/app/interfaces';
+import { City, Country, Paginate, State, Table } from 'src/app/interfaces';
 
 @Component({
   selector: 'shared-list-table',
@@ -8,23 +10,29 @@ import { Table } from 'src/app/interfaces';
   styles: [
   ]
 })
-export class ListTableComponent  {
-
-  @Output()
-  public onGotoDetails: EventEmitter<number> = new EventEmitter();
-
-  @Output()
-  public onGotoUpdate: EventEmitter<number> = new EventEmitter();
-
-  @Output()
-  public onDelete: EventEmitter<number> = new EventEmitter();
+export class ListTableComponent {
 
   get columns() {
      const data = this.columnsData.map( columns => {
       return columns.columnHeater;
     });
-    data.push('actions')
+    data.push('actions');
     return data;
+  }
+
+  get dataSource() {
+    return new MatTableDataSource<Country|State|City>(this.list);
+  }
+
+  get pageItems() {
+    return 10;
+  }
+
+  public seachInput = new FormControl('');
+
+  public paginate: Paginate = {
+    page: 1,
+    filter: ''
   }
 
   @Input()
@@ -35,6 +43,51 @@ export class ListTableComponent  {
 
   @Input()
   public showDetails: boolean = true;
+
+  @Input()
+  public page: number = 1;
+
+  @Input()
+  public total: number = 0;
+
+  @Output()
+  public onGotoDetails: EventEmitter<number> = new EventEmitter();
+
+  @Output()
+  public onGotoUpdate: EventEmitter<number> = new EventEmitter();
+
+  @Output()
+  public onDelete: EventEmitter<number> = new EventEmitter();
+
+  @Output()
+  public onChangePage: EventEmitter<Paginate> = new EventEmitter();
+
+  @Output()
+  public onFilter: EventEmitter<Paginate> = new EventEmitter();
+
+  @Output()
+  public onCleanFilter: EventEmitter<number> = new EventEmitter();
+
+  emitPage(pageNum : number) {
+    this.page = pageNum;
+
+    this.paginate.page = this.page;
+    this.paginate.filter = this.seachInput.value || '';
+
+    this.onChangePage.emit(this.paginate);
+  }
+
+  emitSearch() {
+    this.paginate.page = this.page;
+    this.paginate.filter = this.seachInput.value || '';
+    this.onFilter.emit(this.paginate);
+  }
+
+  emitCleanFilter() {
+    this.page = 1;
+    this.seachInput.setValue('');
+    this.onCleanFilter.emit(1);
+  }
 
   emitDetails(id : number) {
     this.onGotoDetails.emit(id);

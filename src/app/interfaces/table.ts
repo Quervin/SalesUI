@@ -3,3 +3,7 @@ export interface Table {
     columnHeaterValue: string;
 }
 
+export interface Paginate {
+    page: number;
+    filter: string;
+}

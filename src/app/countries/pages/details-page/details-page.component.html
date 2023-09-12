@@ -11,4 +11,4 @@
 
 <mat-divider class="mb-2"></mat-divider>
 
-<shared-list-table [list]="country.states" [columnsData]="columns" (onGotoDetails)="gotoStateDetails($event)" (onGotoUpdate)="gotoUpdateState($event)" (onDelete)="deleteState($event)"></shared-list-table>
+<shared-list-table [list]="states" [columnsData]="columns" [total]="totalStates" (onChangePage)="onPageChange($event)" (onFilter)="onPageChange($event)" (onCleanFilter)="loadStates($event)" (onGotoDetails)="gotoStateDetails($event)" (onGotoUpdate)="gotoUpdateState($event)" (onDelete)="deleteState($event)"></shared-list-table>

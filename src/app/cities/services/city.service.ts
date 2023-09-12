@@ -17,6 +17,14 @@ export class CityService {
     return this.http.get<City>(`${this.baseUrl}/v1/api/cities/${ id }`);
   }
 
+  getCities(id: number, page: number, filter: string):Observable<City[]> {
+    return this.http.get<City[]>(`${this.baseUrl}/v1/api/cities?id=${ id }&page=${ page }&filter=${ filter }`);
+  }
+
+  getTotalCities(id: number, filter: string):Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/v1/api/cities/totalCities?id=${ id }&filter=${ filter }`);
+  }
+
   createCity(city: City): Observable<City> {
     return this.http.post<City>(`${ this.baseUrl }/v1/api/cities`, city);
   }
