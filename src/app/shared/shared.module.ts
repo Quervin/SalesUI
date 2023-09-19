@@ -24,13 +24,14 @@ import { SideNavComponent } from './components/side-nav/side-nav.component';
     ReactiveFormsModule,
     NgxPaginationModule,
     MaterialModule,
-    RouterModule
+    RouterModule,
   ],
   exports: [
     FormComponent,
     ListTableComponent,
     LoadingComponent,
     SideNavComponent,
+    MaterialModule
   ]
 })
 export class SharedModule { }

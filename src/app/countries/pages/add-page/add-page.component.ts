@@ -106,7 +106,6 @@ export class AddPageComponent {
 
   }
 
-
   goBack() {
     this.router.navigate(['country/list']);
   }

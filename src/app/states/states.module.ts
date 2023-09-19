@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatesRoutingModule } from './states-routing.module';
 
-import { MaterialModule } from '../material/material.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { DetailsPageComponent } from './pages/details-page/details-page.component';
@@ -19,7 +18,6 @@ import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
   imports: [
     CommonModule,
     StatesRoutingModule,
-    MaterialModule,
     SharedModule,
   ]
 })

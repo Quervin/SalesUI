@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Category } from 'src/app/interfaces';
+import { CategoryService } from '../../services/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ValidatorsService } from 'src/app/shared/services/validators.service';
 import { catchError, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
-
-import { State } from 'src/app/interfaces';
-
-import { StateService } from '../../services/state.service';
-import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
   templateUrl: './add-page.component.html',
@@ -16,36 +14,29 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
 })
 export class AddPageComponent {
 
-  public namePage: string = 'Crear Estado';
+  public namePage: string = 'Crear Categoria';
   
-  public stateForm: FormGroup = this.fb.group({
-    estado: [ '', [Validators.required, Validators.maxLength(100)] ]
+  public categoryForm: FormGroup = this.fb.group({
+    categoria: [ '', [Validators.required, Validators.maxLength(100)] ]
   });
 
-  public countryId: number = 0;
-
-  public state: State = {
+  public category: Category = {
     id: 0,
-    name: "",
-    countryId: 0
-  };
+    name: ""
+  }
 
   constructor(
     private fb: FormBuilder,
-    private stateService: StateService,
+    private categoryService: CategoryService,
     private activatedRoute: ActivatedRoute,
     private validatorService: ValidatorsService,
     private router: Router
   ) {
-    if ( !this.router.url.includes('edit') ) {
-      this.activatedRoute.params
-      .subscribe(({ id }) => this.countryId = id);
-      return;
-    } 
-    this.namePage = 'Editar Estado';
+    if ( !this.router.url.includes('edit') ) return;
+    this.namePage = 'Editar Categoria';
     this.activatedRoute.params
     .pipe(
-      switchMap( ({ id }) => this.stateService.getState( id ) ),
+      switchMap( ({ id }) => this.categoryService.getCategory( id ) ),
       catchError(({ error, status })  => {
         Swal.fire({
           icon: "error",
@@ -55,28 +46,27 @@ export class AddPageComponent {
         return of();
       })
     )
-    .subscribe( state => {
+    .subscribe( category => {
 
-      if ( !state ) {
+      if ( !category ) {
        this.goBack();
       }
 
-      this.state = state;
-      this.countryId = this.state.countryId;
+      this.category = category;
 
-      this.stateForm.reset({
-        estado: state.name
+      this.categoryForm.reset({
+        categoria: category.name
       });
     });
   }
 
   onSave(myForm: FormGroup) {
 
-    this.state.name = myForm.value.estado;
+    this.category.name = myForm.value.categoria;
 
-    if ( this.state.id != 0 ) {
+    if ( this.category.id != 0 ) {
       this.validatorService.showLoading(true);
-      this.stateService.updateState( this.state )
+      this.categoryService.updateCategory( this.category )
       .pipe(
         catchError(({ error, status })  => {
           Swal.fire({
@@ -93,11 +83,9 @@ export class AddPageComponent {
       });
       return;
     }
-    
-    this.state.countryId = this.countryId;
 
     this.validatorService.showLoading(true);
-    this.stateService.createState(this.state)
+    this.categoryService.createCategory(this.category)
     .pipe(
       catchError( ({ error, status }) => {
         Swal.fire({
@@ -116,6 +104,6 @@ export class AddPageComponent {
   }
 
   goBack() {
-    this.router.navigate(['country/details', this.countryId]);
+    this.router.navigate(['category/list']);
   }
 }

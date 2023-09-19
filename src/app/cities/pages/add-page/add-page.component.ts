@@ -114,7 +114,6 @@ export class AddPageComponent {
 
   }
 
-
   goBack() {
     this.router.navigate(['state/details', this.stateId]);
   }
