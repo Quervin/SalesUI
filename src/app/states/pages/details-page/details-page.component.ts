@@ -26,18 +26,18 @@ export class DetailsPageComponent {
 
   public cities: City[] = [];
   public totalCities: number = 0;
-  
+
   public columns: Table[] = [
-    { columnHeater: 'name',  columnHeaterValue: 'Cuidad'},
+    { columnHeater: 'name', columnHeaterValue: 'Cuidad' },
   ];
-  
+
   constructor(
     private stateService: StateService,
     private cityService: CityService,
     private activatedRoute: ActivatedRoute,
     private validatorService: ValidatorsService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.validatorService.showLoading(true);
@@ -46,54 +46,41 @@ export class DetailsPageComponent {
 
   loadState() {
     this.activatedRoute.params
-    .pipe(
-      tap( ({ id }) => this.stateId = id ),
-      switchMap( ({ id }) => this.stateService.getState( id ) ),
-      catchError(({ error, status })  => {
-        if (status == '404') {
-          this.validatorService.showLoading(false);
+      .pipe(
+        tap(({ id }) => this.stateId = id),
+        switchMap(({ id }) => this.stateService.getState(id)),
+        catchError(({ error, status }) => {
+          if (status == '404') {
+            this.validatorService.showLoading(false);
+            this.goBack();
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: 'Error',
+              text: status != 0 ? error : "Ha ocurrido un error inesperado"
+            });
+            this.validatorService.showLoading(false);
+          }
+          return of();
+        })
+      )
+      .subscribe(state => {
+
+        if (!state) {
           this.goBack();
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: 'Error',
-            text: status != 0 ? error : "Ha ocurrido un error inesperado"
-          });
-          this.validatorService.showLoading(false);
         }
-        return of();
-      })
-    )
-    .subscribe( state => {
 
-      if ( !state ) {
-       this.goBack();
-      }
-
-      this.state = state;
-      this.countryId = this.state.countryId
-      this.loadCities();
-    });
+        this.state = state;
+        this.countryId = this.state.countryId
+        this.loadCities();
+      });
   }
 
   loadCities(page: number = 1, filter: string = '') {
     this.validatorService.showLoading(true);
     this.cityService.getCities(this.stateId, page, filter)
-    .pipe(
-      catchError(({ error, status })  => {
-        Swal.fire({
-          icon: "error",
-          title: 'Error',
-          text: status != 0 ? error : "Ha ocurrido un error inesperado"
-        });
-        this.validatorService.showLoading(false);
-        return of();
-      })
-    )
-    .subscribe( cities => {
-      this.cityService.getTotalCities(this.stateId, filter)
       .pipe(
-        catchError(({ error, status })  => {
+        catchError(({ error, status }) => {
           Swal.fire({
             icon: "error",
             title: 'Error',
@@ -103,12 +90,25 @@ export class DetailsPageComponent {
           return of();
         })
       )
-      .subscribe( total => {
-        this.cities = cities;
-        this.totalCities = total;
-        this.validatorService.showLoading(false);
+      .subscribe(cities => {
+        this.cityService.getTotalCities(this.stateId, filter)
+          .pipe(
+            catchError(({ error, status }) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: status != 0 ? error : "Ha ocurrido un error inesperado"
+              });
+              this.validatorService.showLoading(false);
+              return of();
+            })
+          )
+          .subscribe(total => {
+            this.cities = cities;
+            this.totalCities = total;
+            this.validatorService.showLoading(false);
+          });
       });
-    });
   }
 
   onPageChange(paginate: Paginate) {
@@ -131,24 +131,24 @@ export class DetailsPageComponent {
       showCancelButton: true,
       cancelButtonText: "No",
       confirmButtonText: "Si"
-    }). then(result => {
-      if ( result.isConfirmed ) {
+    }).then(result => {
+      if (result.isConfirmed) {
         this.validatorService.showLoading(true);
         this.cityService.deleteCity(id)
-        .pipe(
-          catchError(({ error, status })  => {
-            Swal.fire({
-              icon: "error",
-              title: 'Error',
-              text: status != 0 ? error : "Ha ocurrido un error inesperado"
-            });
-            this.validatorService.showLoading(false);
-            return of();
+          .pipe(
+            catchError(({ error, status }) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: status != 0 ? error : "Ha ocurrido un error inesperado"
+              });
+              this.validatorService.showLoading(false);
+              return of();
+            })
+          )
+          .subscribe(() => {
+            this.loadState();
           })
-        )
-        .subscribe(()=> {
-          this.loadState();
-        })
       } else {
         return;
       }

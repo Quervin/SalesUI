@@ -17,9 +17,9 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
 export class AddPageComponent {
 
   public namePage: string = 'Crear País';
-  
+
   public countryForm: FormGroup = this.fb.group({
-    pais: [ '', [Validators.required, Validators.maxLength(100)] ]
+    pais: ['', [Validators.required, Validators.maxLength(100)]]
   });
 
   public country: Country = {
@@ -35,43 +35,62 @@ export class AddPageComponent {
     private validatorService: ValidatorsService,
     private router: Router
   ) {
-    if ( !this.router.url.includes('edit') ) return;
+    if (!this.router.url.includes('edit')) return;
     this.namePage = 'Editar País';
     this.activatedRoute.params
-    .pipe(
-      switchMap( ({ id }) => this.countryService.getCountry( id ) ),
-      catchError(({ error, status })  => {
-        Swal.fire({
-          icon: "error",
-          title: 'Error',
-          text: status != 0 ? error : "Ha ocurrido un error inesperado"
+      .pipe(
+        switchMap(({ id }) => this.countryService.getCountry(id)),
+        catchError(({ error, status }) => {
+          Swal.fire({
+            icon: "error",
+            title: 'Error',
+            text: status != 0 ? error : "Ha ocurrido un error inesperado"
+          });
+          return of();
+        })
+      )
+      .subscribe(country => {
+
+        if (!country) {
+          this.goBack();
+        }
+
+        this.country = country;
+
+        this.countryForm.reset({
+          pais: country.name
         });
-        return of();
-      })
-    )
-    .subscribe( country => {
-
-      if ( !country ) {
-       this.goBack();
-      }
-
-      this.country = country;
-
-      this.countryForm.reset({
-        pais: country.name
       });
-    });
   }
 
   onSave(myForm: FormGroup) {
 
     this.country.name = myForm.value.pais;
 
-    if ( this.country.id != 0 ) {
+    if (this.country.id != 0) {
       this.validatorService.showLoading(true);
-      this.countryService.updateCountry( this.country )
+      this.countryService.updateCountry(this.country)
+        .pipe(
+          catchError(({ error, status }) => {
+            Swal.fire({
+              icon: "error",
+              title: 'Error',
+              text: status != 0 ? error : "Ha ocurrido un error inesperado"
+            });
+            this.validatorService.showLoading(false);
+            return of();
+          })
+        ).subscribe(() => {
+          this.validatorService.showLoading(false);
+          this.goBack();
+        });
+      return;
+    }
+
+    this.validatorService.showLoading(true);
+    this.countryService.createCountry(this.country)
       .pipe(
-        catchError(({ error, status })  => {
+        catchError(({ error, status }) => {
           Swal.fire({
             icon: "error",
             title: 'Error',
@@ -84,25 +103,6 @@ export class AddPageComponent {
         this.validatorService.showLoading(false);
         this.goBack();
       });
-      return;
-    }
-
-    this.validatorService.showLoading(true);
-    this.countryService.createCountry(this.country)
-    .pipe(
-      catchError( ({ error, status }) => {
-        Swal.fire({
-          icon: "error",
-          title: 'Error',
-          text: status != 0 ? error : "Ha ocurrido un error inesperado"
-        });
-        this.validatorService.showLoading(false);
-        return of();
-      })
-    ).subscribe(() => {
-      this.validatorService.showLoading(false);
-      this.goBack();
-    });
 
   }
 

@@ -14,18 +14,18 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
   ]
 })
 export class ListPageComponent implements OnInit {
-  
+
   public categories: Category[] = [];
   public totalCategories: number = 0;
   public columns: Table[] = [
-    { columnHeater: 'name',  columnHeaterValue: 'Categoria'}
+    { columnHeater: 'name', columnHeaterValue: 'Categoria' }
   ];
 
   constructor(
     private categoryService: CategoryService,
     private validatorService: ValidatorsService,
-    private router:Router
-  ) {}
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadCategories();
@@ -34,21 +34,8 @@ export class ListPageComponent implements OnInit {
   loadCategories(page: number = 1, filter = '') {
     this.validatorService.showLoading(true);
     this.categoryService.getCategories(page, filter)
-    .pipe(
-      catchError(({ error, status })  => {
-        Swal.fire({
-          icon: "error",
-          title: 'Error',
-          text: status != 0 ? error : "Ha ocurrido un error inesperado"
-        });
-        this.validatorService.showLoading(false);
-        return of();
-      })
-    )
-    .subscribe( categories => {
-      this.categoryService.getTotalCategories(filter)
       .pipe(
-        catchError(({ error, status })  => {
+        catchError(({ error, status }) => {
           Swal.fire({
             icon: "error",
             title: 'Error',
@@ -58,12 +45,25 @@ export class ListPageComponent implements OnInit {
           return of();
         })
       )
-      .subscribe( total => {
-        this.categories = categories;
-        this.totalCategories = total;
-        this.validatorService.showLoading(false);
+      .subscribe(categories => {
+        this.categoryService.getTotalCategories(filter)
+          .pipe(
+            catchError(({ error, status }) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: status != 0 ? error : "Ha ocurrido un error inesperado"
+              });
+              this.validatorService.showLoading(false);
+              return of();
+            })
+          )
+          .subscribe(total => {
+            this.categories = categories;
+            this.totalCategories = total;
+            this.validatorService.showLoading(false);
+          });
       });
-    });
   }
 
   onPageChange(paginate: Paginate) {
@@ -71,11 +71,11 @@ export class ListPageComponent implements OnInit {
   }
 
   gotoCreateCategory() {
-    this.router.navigate(['category/add']);
+    this.router.navigate(['/category/add']);
   }
 
   gotoUpdateCategory(id: number) {
-    this.router.navigate(['category/edit', id]);
+    this.router.navigate(['/category/edit', id]);
   }
 
   deleteCategory(id: number) {
@@ -86,24 +86,24 @@ export class ListPageComponent implements OnInit {
       showCancelButton: true,
       cancelButtonText: "No",
       confirmButtonText: "Si"
-    }). then(result => {
-      if ( result.isConfirmed ) {
+    }).then(result => {
+      if (result.isConfirmed) {
         this.validatorService.showLoading(true);
         this.categoryService.deleteCategory(id)
-        .pipe(
-          catchError(({ error, status })  => {
-            Swal.fire({
-              icon: "error",
-              title: 'Error',
-              text: status != 0 ? error : "Ha ocurrido un error inesperado"
-            });
-            this.validatorService.showLoading(false);
-            return of();
+          .pipe(
+            catchError(({ error, status }) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: status != 0 ? error : "Ha ocurrido un error inesperado"
+              });
+              this.validatorService.showLoading(false);
+              return of();
+            })
+          )
+          .subscribe(() => {
+            this.loadCategories();
           })
-        )
-        .subscribe(()=> {
-          this.loadCategories();
-        })
       } else {
         return;
       }

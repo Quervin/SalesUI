@@ -13,7 +13,7 @@ import { City, Country, Paginate, State, Table } from 'src/app/interfaces';
 export class ListTableComponent {
 
   get columns() {
-     const data = this.columnsData.map( columns => {
+    const data = this.columnsData.map(columns => {
       return columns.columnHeater;
     });
     data.push('actions');
@@ -21,7 +21,7 @@ export class ListTableComponent {
   }
 
   get dataSource() {
-    return new MatTableDataSource<Country|State|City>(this.list);
+    return new MatTableDataSource<Country | State | City>(this.list);
   }
 
   get pageItems() {
@@ -68,7 +68,7 @@ export class ListTableComponent {
   @Output()
   public onCleanFilter: EventEmitter<number> = new EventEmitter();
 
-  emitPage(pageNum : number) {
+  emitPage(pageNum: number) {
     this.page = pageNum;
 
     this.paginate.page = this.page;
@@ -89,15 +89,15 @@ export class ListTableComponent {
     this.onCleanFilter.emit(1);
   }
 
-  emitDetails(id : number) {
+  emitDetails(id: number) {
     this.onGotoDetails.emit(id);
   }
 
-  emitUpdate(id : number) {
+  emitUpdate(id: number) {
     this.onGotoUpdate.emit(id);
   }
 
-  emitDelete(id : number) {
+  emitDelete(id: number) {
     this.onDelete.emit(id);
   }
 

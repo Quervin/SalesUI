@@ -31,18 +31,18 @@ export class FormComponent {
 
   constructor(
     private validatorService: ValidatorsService,
-  ) {}
+  ) { }
 
-  isValidField( field: string ) {
-    return this.validatorService.isValidField( this.myForm!, field );
+  isValidField(field: string) {
+    return this.validatorService.isValidField(this.myForm!, field);
   }
 
-  getFieldError( field: string ) {
-    return this.validatorService.getErrorMesage( this.myForm!, field );
+  getFieldError(field: string) {
+    return this.validatorService.getErrorMesage(this.myForm!, field);
   }
 
   emitSave() {
-    if ( this.myForm!.invalid ) {
+    if (this.myForm!.invalid) {
       this.myForm!.markAllAsTouched();
       return;
     }
@@ -53,5 +53,5 @@ export class FormComponent {
   emitBack() {
     this.onGoBack.emit();
   }
-  
+
 }

@@ -18,15 +18,15 @@ export class ListPageComponent implements OnInit {
   public countries: Country[] = [];
   public totalCountries: number = 0;
   public columns: Table[] = [
-    { columnHeater: 'name',  columnHeaterValue: 'País'},
-    { columnHeater: 'statesNumber', columnHeaterValue: 'Estados / Departamentos'}
+    { columnHeater: 'name', columnHeaterValue: 'País' },
+    { columnHeater: 'statesNumber', columnHeaterValue: 'Estados / Departamentos' }
   ];
 
-  constructor( 
+  constructor(
     private countryService: CountryService,
     private validatorService: ValidatorsService,
-    private router:Router
-    ) {}
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadCountries();
@@ -35,21 +35,8 @@ export class ListPageComponent implements OnInit {
   loadCountries(page: number = 1, filter = '') {
     this.validatorService.showLoading(true);
     this.countryService.getCountries(page, filter)
-    .pipe(
-      catchError(({ error, status })  => {
-        Swal.fire({
-          icon: "error",
-          title: 'Error',
-          text: status != 0 ? error : "Ha ocurrido un error inesperado"
-        });
-        this.validatorService.showLoading(false);
-        return of();
-      })
-    )
-    .subscribe( countries => {
-      this.countryService.getTotalCountries(filter)
       .pipe(
-        catchError(({ error, status })  => {
+        catchError(({ error, status }) => {
           Swal.fire({
             icon: "error",
             title: 'Error',
@@ -59,12 +46,25 @@ export class ListPageComponent implements OnInit {
           return of();
         })
       )
-      .subscribe( total => {
-        this.countries = countries;
-        this.totalCountries = total;
-        this.validatorService.showLoading(false);
+      .subscribe(countries => {
+        this.countryService.getTotalCountries(filter)
+          .pipe(
+            catchError(({ error, status }) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: status != 0 ? error : "Ha ocurrido un error inesperado"
+              });
+              this.validatorService.showLoading(false);
+              return of();
+            })
+          )
+          .subscribe(total => {
+            this.countries = countries;
+            this.totalCountries = total;
+            this.validatorService.showLoading(false);
+          });
       });
-    });
   }
 
   onPageChange(paginate: Paginate) {
@@ -91,24 +91,24 @@ export class ListPageComponent implements OnInit {
       showCancelButton: true,
       cancelButtonText: "No",
       confirmButtonText: "Si"
-    }). then(result => {
-      if ( result.isConfirmed ) {
+    }).then(result => {
+      if (result.isConfirmed) {
         this.validatorService.showLoading(true);
         this.countryService.deleteCountry(id)
-        .pipe(
-          catchError(({ error, status })  => {
-            Swal.fire({
-              icon: "error",
-              title: 'Error',
-              text: status != 0 ? error : "Ha ocurrido un error inesperado"
-            });
-            this.validatorService.showLoading(false);
-            return of();
+          .pipe(
+            catchError(({ error, status }) => {
+              Swal.fire({
+                icon: "error",
+                title: 'Error',
+                text: status != 0 ? error : "Ha ocurrido un error inesperado"
+              });
+              this.validatorService.showLoading(false);
+              return of();
+            })
+          )
+          .subscribe(() => {
+            this.loadCountries();
           })
-        )
-        .subscribe(()=> {
-          this.loadCountries();
-        })
       } else {
         return;
       }

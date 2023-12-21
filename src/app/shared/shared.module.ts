@@ -28,6 +28,7 @@ import { SideNavComponent } from './components/side-nav/side-nav.component';
   ],
   exports: [
     FormComponent,
+    ReactiveFormsModule,
     ListTableComponent,
     LoadingComponent,
     SideNavComponent,

@@ -16,9 +16,9 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
 })
 export class AddPageComponent {
   public namePage: string = 'Crear Estado';
-  
+
   public cityForm: FormGroup = this.fb.group({
-    cuidad: [ '', [Validators.required, Validators.maxLength(100)] ]
+    cuidad: ['', [Validators.required, Validators.maxLength(100)]]
   });
 
   public stateId: number = 0;
@@ -36,48 +36,69 @@ export class AddPageComponent {
     private validatorService: ValidatorsService,
     private router: Router
   ) {
-    if ( !this.router.url.includes('edit') ) {
+    if (!this.router.url.includes('edit')) {
       this.activatedRoute.params
-      .subscribe(({ id }) => this.stateId = id);
+        .subscribe(({ id }) => this.stateId = id);
       return;
-    } 
+    }
     this.namePage = 'Editar Estado';
     this.activatedRoute.params
-    .pipe(
-      switchMap( ({ id }) => this.cityService.getCity( id ) ),
-      catchError(({ error, status })  => {
-        Swal.fire({
-          icon: "error",
-          title: 'Error',
-          text: status != 0 ? error : "Ha ocurrido un error inesperado"
+      .pipe(
+        switchMap(({ id }) => this.cityService.getCity(id)),
+        catchError(({ error, status }) => {
+          Swal.fire({
+            icon: "error",
+            title: 'Error',
+            text: status != 0 ? error : "Ha ocurrido un error inesperado"
+          });
+          return of();
+        })
+      )
+      .subscribe(state => {
+
+        if (!state) {
+          this.goBack();
+        }
+
+        this.city = state;
+        this.stateId = this.city.stateId;
+
+        this.cityForm.reset({
+          cuidad: state.name
         });
-        return of();
-      })
-    )
-    .subscribe( state => {
-
-      if ( !state ) {
-       this.goBack();
-      }
-
-      this.city = state;
-      this.stateId = this.city.stateId;
-
-      this.cityForm.reset({
-        cuidad: state.name
       });
-    });
   }
 
   onSave(myForm: FormGroup) {
 
     this.city.name = myForm.value.cuidad;
 
-    if ( this.city.id != 0 ) {
+    if (this.city.id != 0) {
       this.validatorService.showLoading(true);
-      this.cityService.updateCity( this.city )
+      this.cityService.updateCity(this.city)
+        .pipe(
+          catchError(({ error, status }) => {
+            Swal.fire({
+              icon: "error",
+              title: 'Error',
+              text: status != 0 ? error : "Ha ocurrido un error inesperado"
+            });
+            this.validatorService.showLoading(false);
+            return of();
+          })
+        ).subscribe(() => {
+          this.validatorService.showLoading(false);
+          this.goBack();
+        });
+      return;
+    }
+
+    this.city.stateId = this.stateId;
+
+    this.validatorService.showLoading(true);
+    this.cityService.createCity(this.city)
       .pipe(
-        catchError(({ error, status })  => {
+        catchError(({ error, status }) => {
           Swal.fire({
             icon: "error",
             title: 'Error',
@@ -90,27 +111,6 @@ export class AddPageComponent {
         this.validatorService.showLoading(false);
         this.goBack();
       });
-      return;
-    }
-    
-    this.city.stateId = this.stateId;
-
-    this.validatorService.showLoading(true);
-    this.cityService.createCity(this.city)
-    .pipe(
-      catchError( ({ error, status }) => {
-        Swal.fire({
-          icon: "error",
-          title: 'Error',
-          text: status != 0 ? error : "Ha ocurrido un error inesperado"
-        });
-        this.validatorService.showLoading(false);
-        return of();
-      })
-    ).subscribe(() => {
-      this.validatorService.showLoading(false);
-      this.goBack();
-    });
 
   }
 
