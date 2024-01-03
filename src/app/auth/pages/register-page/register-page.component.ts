@@ -143,6 +143,12 @@ export class RegisterPageComponent {
   }
   
   register() {
+
+    if ( this.registerForm.invalid ) {
+      this.validatorService.markForm(this.registerForm);
+      return;
+    }
+
     const { document, firstName, lastName, address, phoneNumber, city, photo, email, password, passwordConfirm } = this.registerForm.value;
 
     this.user.firstName = firstName;

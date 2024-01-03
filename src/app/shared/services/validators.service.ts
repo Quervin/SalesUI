@@ -36,6 +36,17 @@ export class ValidatorsService {
     return null;
   }
 
+  public markForm(form: FormGroup) {
+    return Object.values( form.controls ).forEach( control => {
+        
+      if ( control instanceof FormGroup ) {
+        Object.values( control.controls ).forEach( control => control.markAsTouched() );
+      } else {
+        control.markAsTouched();
+      }
+    });
+  }
+
   // Only Integer Numbers
   public isNumber(event: any) {
     let charCode = (event.which) ? event.which : event.keyCode;

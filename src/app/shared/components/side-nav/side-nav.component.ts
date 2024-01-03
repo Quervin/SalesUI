@@ -21,12 +21,12 @@ export class SideNavComponent {
   constructor(private authService: AuthService,) {
     if (this.authenticate) {
       this.sidebarItems = [
-        { label: 'Listado de Paises', icon: 'label', url: ['/country/list'] },
-        { label: 'Listado de Categorias', icon: 'apps', url: ['/category/list'] }
+        { label: 'Paises', icon: 'label', url: ['/country/list'] },
+        { label: 'Categorias', icon: 'apps', url: ['/category/list'] }
       ]
     } else {
       this.sidebarItems = [
-        { label: 'Login', icon: 'edit', url: ['/auth/login'] }
+        { label: 'Login', icon: 'login', url: ['/auth/login'] }
       ]
     }
   }

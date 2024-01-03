@@ -41,6 +41,11 @@ export class LoginPageComponent {
   }
 
   login() {
+    if ( this.loginForm.invalid ) {
+      this.validatorService.markForm(this.loginForm);
+      return;
+    }
+
     const { email, password } = this.loginForm.value;
     this.user.email = email;
     this.user.password = password;
