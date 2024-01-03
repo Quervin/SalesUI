@@ -40,7 +40,7 @@
                 <div>
                     <div class="wrap-input100 m-b-23">
                         <span class="label-input100">Teléfono:</span>
-                        <input class="input100" type="text" formControlName="phoneNumber" placeholder="Teléfono">
+                        <input class="input100" type="text" formControlName="phoneNumber" placeholder="Teléfono" (keypress)="keyPressNumbers($event)">
                         <span class="focus-input100"></span>
                     </div>
                     <span *ngIf="isValidField('phoneNumber')" class="mat-mdc-form-field-error">
@@ -72,9 +72,29 @@
             <div class="md:col-5 md:col-offset-1 sm:col-12">
                 <div>
                     <div class="wrap-input100 m-b-23">
+                        <span class="label-input100">País:</span>
+                        <select class="input100" (change)="countryChanged($event)">
+                            <option value="0">-- Seleccione un país --</option>
+                            <option *ngFor="let item of countries" [value]="item.id">{{ item.name }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="wrap-input100 m-b-23">
+                        <span class="label-input100">Estado/Departamento:</span>
+                        <select class="input100" (change)="stateChanged($event)">
+                            <option value="0">-- Seleccione un estado/departamento --</option>
+                            <option *ngFor="let item of states" [value]="item.id">{{ item.name }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="wrap-input100 m-b-23">
                         <span class="label-input100">Ciudad:</span>
-                        <input class="input100" type="text" formControlName="city" placeholder="Ciudad">
-                        <span class="focus-input100"></span>
+                        <select class="input100" formControlName="city">
+                            <option value="">-- Seleccione una ciudad --</option>
+                            <option *ngFor="let item of cities" [value]="item.id">{{ item.name }}</option>
+                        </select>
                     </div>
                     <span *ngIf="isValidField('city')" class="mat-mdc-form-field-error">
                         *{{ getFieldError('city') }}

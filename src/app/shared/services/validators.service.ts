@@ -36,6 +36,18 @@ export class ValidatorsService {
     return null;
   }
 
+  // Only Integer Numbers
+  public isNumber(event: any) {
+    let charCode = (event.which) ? event.which : event.keyCode;
+    // Only Numbers 0-9
+    if ((charCode < 48 || charCode > 57)) {
+      event.preventDefault();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   showLoading(changeLoading: boolean) {
     this.loading = changeLoading;
   }

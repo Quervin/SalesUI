@@ -17,6 +17,10 @@ export class CountryService {
 
   constructor(private http: HttpClient) { }
 
+  getComboCountries(): Observable<Country[]> {
+    return this.http.get<Country[]>(`${this.baseUrl}/v1/api/countries/combo`);
+  }
+
   getCountries(page: number, filter: string): Observable<Country[]> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.token}`

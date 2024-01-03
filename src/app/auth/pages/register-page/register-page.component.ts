@@ -4,10 +4,13 @@ import { Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { Register, UserType } from 'src/app/interfaces';
+import { City, Country, Register, State, UserType } from 'src/app/interfaces';
 
 import { AuthService } from '../../services/auth.service';
 import { ValidatorsService } from 'src/app/shared/services/validators.service';
+import { CityService } from 'src/app/cities/services/city.service';
+import { CountryService } from 'src/app/countries/services/country.service';
+import { StateService } from 'src/app/states/services/state.service';
 
 @Component({
   templateUrl: './register-page.component.html',
@@ -43,12 +46,21 @@ export class RegisterPageComponent {
     userType: UserType.User
   }
 
+  public countries:Country[] = [];
+  public states:State[] = [];
+  public cities:City[] = [];
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private cityService: CityService,
+    private countryService: CountryService,
+    private stateService: StateService,
     private validatorService: ValidatorsService,
     private router: Router
-  ) { }
+  ) {
+    this.loadCountries();
+   }
 
   isValidField(field: string) {
     return this.validatorService.isValidField(this.registerForm, field);
@@ -58,6 +70,78 @@ export class RegisterPageComponent {
     return this.validatorService.getErrorMesage(this.registerForm, field);
   }
 
+  keyPressNumbers(event: any) {
+    return this.validatorService.isNumber(event);
+  }
+
+  loadCountries() {
+    this.validatorService.showLoading(true);
+    this.countryService.getComboCountries()
+    .pipe(
+      catchError(({ error, status }) => {
+        Swal.fire({
+          icon: "error",
+          title: 'Error',
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
+        });
+        this.validatorService.showLoading(false);
+        return of();
+      })
+    ).subscribe( countries => {
+      this.countries = countries;
+      this.validatorService.showLoading(false);
+    })
+  }
+
+  loadCities(stateId: number) {
+    this.validatorService.showLoading(true);
+    this.cities = [];
+    this.cityService.getComboCities(stateId)
+    .pipe(
+      catchError(({ error, status }) => {
+        Swal.fire({
+          icon: "error",
+          title: 'Error',
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
+        });
+        this.validatorService.showLoading(false);
+        return of();
+      })
+    ).subscribe( cities => {
+      this.cities = cities;
+      this.validatorService.showLoading(false);
+    })
+  }
+
+  loadStates(countryId: number) {
+    this.validatorService.showLoading(true);
+    this.states = [];
+    this.cities = [];
+    this.stateService.getComboStates(countryId)
+    .pipe(
+      catchError(({ error, status }) => {
+        Swal.fire({
+          icon: "error",
+          title: 'Error',
+          text: status != 0 ? error : "Ha ocurrido un error inesperado"
+        });
+        this.validatorService.showLoading(false);
+        return of();
+      })
+    ).subscribe( states => {
+      this.states = states;
+      this.validatorService.showLoading(false);
+    })
+  }
+
+  countryChanged(event: any) {
+    this.loadStates(event.target.value);
+  }
+
+  stateChanged(event: any) {
+    this.loadCities(event.target.value);
+  }
+  
   register() {
     const { document, firstName, lastName, address, phoneNumber, city, photo, email, password, passwordConfirm } = this.registerForm.value;
 

@@ -24,6 +24,10 @@ export class CityService {
     return this.http.get<City>(`${this.baseUrl}/v1/api/cities/${id}`, { headers });
   }
 
+  getComboCities(stateId: number): Observable<City[]> {
+    return this.http.get<City[]>(`${this.baseUrl}/v1/api/cities/combo/${stateId}`);
+  }
+
   getCities(id: number, page: number, filter: string): Observable<City[]> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.token}`

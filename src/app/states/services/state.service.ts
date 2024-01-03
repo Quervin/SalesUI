@@ -24,6 +24,10 @@ export class StateService {
     return this.http.get<State>(`${this.baseUrl}/v1/api/states/${id}`, { headers });
   }
 
+  getComboStates(countryId: number): Observable<State[]> {
+    return this.http.get<State[]>(`${this.baseUrl}/v1/api/states/combo/${countryId}`);
+  }
+
   getStates(id: number, page: number, filter: string): Observable<State[]> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.token}`
