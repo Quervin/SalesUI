@@ -7,10 +7,18 @@
 </ng-template>
 
 <div class="flex flex-colum p-2 grid">
-  <mat-form-field class="col-6">
+  <!-- <mat-form-field class="col-6">
     <mat-label>Filtro</mat-label>
     <input type="text" matInput placeholder="Buscar país.." [formControl]="seachInput">
-  </mat-form-field>
+  </mat-form-field> -->
+
+  <div class="col-6">
+    <div class="wrap-input100 m-b-23">
+        <span class="label-input100">Filtro</span>
+        <input class="input100" type="text" [formControl]="seachInput" placeholder="Buscar país..">
+        <span class="focus-input100"></span>
+    </div>
+</div>
 
   <div class="col-6">
     <button (click)="emitSearch()" mat-stroked-button color="primary" class="m-2">Filtrar</button>
@@ -18,7 +26,7 @@
   </div>
 </div>
 
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 mb-2">
 
   <table *ngIf="list.length != 0; else divTable" mat-table
     [dataSource]="list | paginate: { id: 'paginator', itemsPerPage: pageItems, currentPage: page, totalItems: total }">
@@ -47,6 +55,6 @@
 </div>
 
 <div class="text-center">
-  <pagination-controls (pageChange)="emitPage($event)" previousLabel="Anterior" nextLabel="Siguiente"
+  <pagination-controls (pageChange)="emitPage($event)" previousLabel="Anterior" nextLabel="Siguiente" class="pagination"
     [responsive]="true" id="paginator"></pagination-controls>
 </div>

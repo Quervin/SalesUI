@@ -1,14 +1,17 @@
 
         <mat-card>
             <mat-card-content>
-                <form class="grid" [formGroup]="myForm!" (ngSubmit)="emitSave()">
-                    <mat-form-field class="col-12">
-                        <mat-label>{{ label }}</mat-label>
-                        <input matInput type="text" required [formControlName]="name" [placeholder]="placeholder">
-                        <mat-error *ngIf="isValidField(name)" class="mb-2">
-                            {{ getFieldError(name) }}
-                        </mat-error>
-                    </mat-form-field>
+                <form class="login100-form" [formGroup]="myForm!" (ngSubmit)="emitSave()">
+                    <div class="mb-2">
+                        <div class="wrap-input100 m-b-23">
+                            <span class="label-input100">{{ label }}</span>
+                            <input class="input100" type="text" [formControlName]="name" [placeholder]="placeholder">
+                            <span class="focus-input100"></span>
+                        </div>
+                        <span *ngIf="isValidField(name)" class="mat-mdc-form-field-error">
+                            *{{ getFieldError(name) }}
+                        </span>
+                    </div>
                 </form>
 
                 <div class="flex justify-content-between">

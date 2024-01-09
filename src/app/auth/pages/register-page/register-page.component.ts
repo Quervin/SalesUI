@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { Observable, ReplaySubject, catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 
 import { City, Country, Register, State, UserType } from 'src/app/interfaces';
@@ -14,7 +14,7 @@ import { StateService } from 'src/app/states/services/state.service';
 
 @Component({
   templateUrl: './register-page.component.html',
-  styleUrls: ['./register-page.component.css']
+  styles: []
 })
 export class RegisterPageComponent {
 
@@ -25,7 +25,6 @@ export class RegisterPageComponent {
     address: ['', [Validators.required, Validators.maxLength(200)]],
     phoneNumber: ['', [Validators.required]],
     city: ['', [Validators.required]],
-    photo: [''],
     email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     passwordConfirm: ['', [Validators.required, Validators.minLength(6)]],
@@ -45,6 +44,8 @@ export class RegisterPageComponent {
     password: '',
     userType: UserType.User
   }
+
+  public imageBase64: string | null = null;
 
   public countries:Country[] = [];
   public states:State[] = [];
@@ -141,6 +142,21 @@ export class RegisterPageComponent {
   stateChanged(event: any) {
     this.loadCities(event.target.value);
   }
+
+  photoChanged(event: any) {
+
+    this.convertFile(event.target.files[0]).subscribe(base64 => {
+      this.imageBase64 = base64;
+    });
+  }
+
+  convertFile(file : File) : Observable<string> {
+    const result = new ReplaySubject<string>(1);
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = (event) => result.next(btoa(event.target?.result?.toString()!));
+    return result;
+  }
   
   register() {
 
@@ -149,7 +165,7 @@ export class RegisterPageComponent {
       return;
     }
 
-    const { document, firstName, lastName, address, phoneNumber, city, photo, email, password, passwordConfirm } = this.registerForm.value;
+    const { document, firstName, lastName, address, phoneNumber, city, email, password, passwordConfirm } = this.registerForm.value;
 
     this.user.firstName = firstName;
     this.user.lastName = lastName;
@@ -157,11 +173,14 @@ export class RegisterPageComponent {
     this.user.address = address;
     this.user.phoneNumber = phoneNumber;
     this.user.cityId = city;
-    this.user.photo = photo;
     this.user.email = email;
     this.user.userName = email;
     this.user.password = password;
     this.user.passwordConfirm = passwordConfirm;
+
+    if (this.imageBase64 != null) {
+      this.user.photo = this.imageBase64;
+    }
 
     this.validatorService.showLoading(true);
     this.authService.register(this.user)

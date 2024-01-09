@@ -10,6 +10,7 @@ import { FormComponent } from './components/form/form.component';
 import { ListTableComponent } from './components/list-table/list-table.component';
 import { LoadingComponent } from './components/loading/loading.component';
 import { SideNavComponent } from './components/side-nav/side-nav.component';
+import { ImagePipe } from './pipes/image.pipe';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { SideNavComponent } from './components/side-nav/side-nav.component';
     ListTableComponent,
     LoadingComponent,
     SideNavComponent,
+    ImagePipe,
   ],
   imports: [
     CommonModule,
@@ -32,7 +34,8 @@ import { SideNavComponent } from './components/side-nav/side-nav.component';
     ListTableComponent,
     LoadingComponent,
     SideNavComponent,
-    MaterialModule
+    MaterialModule,
+    ImagePipe
   ]
 })
 export class SharedModule { }

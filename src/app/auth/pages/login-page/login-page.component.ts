@@ -11,7 +11,7 @@ import { ValidatorsService } from 'src/app/shared/services/validators.service';
 
 @Component({
   templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.css']
+  styles: []
 })
 export class LoginPageComponent {
 

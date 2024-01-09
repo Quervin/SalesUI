@@ -25,6 +25,14 @@
 
         <span class="spacer"></span>
 
+        <button mat-button *ngIf="!authenticate" (click)="gotoRegister()">
+            <mat-icon>account_circle</mat-icon>Register
+        </button>
+
+        <button mat-button *ngIf="!authenticate" (click)="gotoLogin()">
+            <mat-icon>login</mat-icon>Login
+        </button>
+
         <button mat-button *ngIf="authenticate" (click)="logout()">
             <mat-icon>logout</mat-icon>Logout
         </button>

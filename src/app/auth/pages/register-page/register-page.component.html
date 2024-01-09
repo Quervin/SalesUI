@@ -106,16 +106,6 @@
                         </div>
                         <div>
                             <div class="wrap-input100 m-b-23">
-                                <span class="label-input100">Foto:</span>
-                                <input class="input100" type="text" formControlName="photo" placeholder="Foto">
-                                <span class="focus-input100"></span>
-                            </div>
-                            <span *ngIf="isValidField('photo')" class="mat-mdc-form-field-error">
-                                *{{ getFieldError('photo') }}
-                            </span>
-                        </div>
-                        <div>
-                            <div class="wrap-input100 m-b-23">
                                 <span class="label-input100">Contraseña:</span>
                                 <input class="input100" type="password" formControlName="password" placeholder="Contraseña">
                                 <span class="focus-input100"></span>
@@ -134,7 +124,21 @@
                                 *{{ getFieldError('passwordConfirm') }}
                             </span>
                         </div>
-                        
+                        <div>
+                            <div class="wrap-input100 m-b-23">
+                                <span class="label-input100">Foto:</span>
+                                <input class="input100" type="file" (change)="photoChanged($event)">
+                                <span class="focus-input100"></span>
+                            </div>
+
+                            <div>
+                                <div *ngIf="imageBase64 != null">
+                                    <div style="margin: 10px">
+                                        <img [src]="imageBase64 | image" style="width:400px" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
         
